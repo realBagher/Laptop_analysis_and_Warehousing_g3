@@ -27,3 +27,23 @@ conn = engine.connect()
 
 #%%
 Base = declarative_base()
+
+# Define SQLAlchemy table classes
+
+
+class LapTop(Base):
+    __tablename__ = 'laptop'
+
+    id = Column(Integer, unique=True, primary_key=True)
+    Manufacturer = Column(String(64))
+    Model_Name = Column(String(255))
+    Category = Column(String(64))
+    Screen_Size = Column(String(64))
+    Screen = Column(String(64))
+    CPU = Column(String(64))
+    Ram = Column(String(32))
+    Storage = Column(String(64))
+    GPU = Column(String(64))
+    OS = Column(String(32))
+    OS_Version = Column(Float)
+    Weight = Column(String(32))
