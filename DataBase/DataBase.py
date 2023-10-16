@@ -55,3 +55,4 @@ class Order(Base):
     laptop = relationship("LapTop", back_populates="orders")
     date = Column(DateTime)
     price = Column(Float)
+
