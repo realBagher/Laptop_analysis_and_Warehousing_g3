@@ -29,7 +29,9 @@ conn = engine.connect()
 Base = declarative_base()
 
 # Define SQLAlchemy table classes
-class LapTop(Base):
+
+
+class LapTop(Base):  # define table of laptop (normalized)
     __tablename__ = 'laptop'
 
     id = Column(Integer, unique=True, primary_key=True)
@@ -50,9 +52,23 @@ class LapTop(Base):
 class Order(Base):
     __tablename__ = 'order'
 
-    id = Column(Integer, unique=True, primary_key=True)
+    Order_id = Column(Integer, unique=True, primary_key=True)
+    Branch = Column(String(64))
     laptop_id = Column(Integer, ForeignKey('laptop.id'))
-    laptop = relationship("LapTop", back_populates="orders")
-    date = Column(DateTime)
+    Order_Date = Column(DateTime)
+    Order_Priority = Column(String(32))
     price = Column(Float)
+    Quantity = Column(Integer)
+    Discount = Column(Integer)
+    Total_Price = Column(Float)
+    Profit = Column(Float)
+    Ship_Duration = Column(Integer)
+
+
+# Session finish for making changes in database
+
+
+Base.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)
+session = Session()
 
