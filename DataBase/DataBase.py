@@ -45,3 +45,15 @@ class LapTop(Base):
     OS = Column(String(32))
     OS_Version = Column(Float)
     Weight = Column(String(32))
+
+
+class Order(Base):
+    __tablename__ = 'order'
+
+    id = Column(Integer, unique=True, primary_key=True)
+    person_id = Column(Integer, ForeignKey('person.id'))
+    person = relationship("Person", back_populates="orders")
+    laptop_id = Column(Integer, ForeignKey('laptop.id'))
+    laptop = relationship("LapTop", back_populates="orders")
+    date = Column(DateTime)
+    price = Column(Float)
