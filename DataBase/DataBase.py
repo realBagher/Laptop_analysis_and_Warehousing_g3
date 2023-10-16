@@ -29,8 +29,6 @@ conn = engine.connect()
 Base = declarative_base()
 
 # Define SQLAlchemy table classes
-
-
 class LapTop(Base):
     __tablename__ = 'laptop'
 
