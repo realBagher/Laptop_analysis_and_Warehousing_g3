@@ -113,9 +113,6 @@ class Scraping():
         # Return the list of torob links
         return tlinks
 
-    import pandas as pd
-    import requests
-
     def get_digikala_links(self, test, categories='notebook-netbook-ultrabook'):
         """
         Retrieves Digikala product links from the specified category.
@@ -182,6 +179,13 @@ class Scraping():
         return tlinks
 
     def to_csv_all_links(self, data=0, name='all_data'):
+        """
+        Saves links to CSV file.
+        :param data: dictionary for data to save
+        :param name: name of the file
+        :return: a csv file
+        """
+        # if data == 0: save all atributes of class
         if data == 0:
             d = {
                 'Site': self.Site,
@@ -194,17 +198,25 @@ class Scraping():
                 'StockStatus': self.StockStatus,
                 'Attributes': self.Other,
             }
+            # print length of each attribute before converting to dataframe
             for k, v in d.items():
                 print(k, ' ', len(v))
             links = pd.DataFrame(d)
         else:
+            # if data != 0: save only selected atributes
             links = pd.DataFrame(data)
         return links.to_csv(name + '.csv')
 
     def get_pricechart_torob(self, urls):
+        '''
+        get price chart from torob site
+        :param urls: id of product
+        :return: none just save data in attributes of class
+        '''
         urls = urls
 
         async def get_each_laptop_from_torob0(id, json):
+            # save data price chart of class
             labels = json['labels']
             for i in range(len(labels)):
                 try:
@@ -225,6 +237,11 @@ class Scraping():
                     self.PricChart['date'].append(None)
 
         async def fetch0(session, url):
+            '''
+            get price chart from torob site
+            :param url: id of product
+            :return: json data
+            '''
             url0 = f'https://api.torob.com/v4/base-product/price-chart/?prk={url}&t=1697519794164&source=next_d'
             semaphore = asyncio.Semaphore(10)
             try:
@@ -241,6 +258,10 @@ class Scraping():
         count = []
 
         async def scrape_book0(url):
+            ''' get price chart from torob site and send data to class
+            :param url: id of product
+            :return: no
+            '''
             async with aiohttp.ClientSession() as session:
                 try:
                     json = await fetch0(session, url)
@@ -636,10 +657,11 @@ class Scraping():
             batch = urls[j:j + batch_size]
             results = loop.run_until_complete(asyncio.gather(*(scrape_book(url) for url in batch)))
 
-
+# this is the main of the program
 scrap = Scraping()
 scrap.get_data_torob(0)
 scrap.get_data_digi(0)
 scrap.to_csv_all_links(scrap.PricChart, name='pricechart')
 scrap.to_csv_all_links(scrap.Stores, name='stores')
 scrap.to_csv_all_links()
+
