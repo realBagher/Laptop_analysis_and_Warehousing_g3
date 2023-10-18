@@ -11,7 +11,7 @@ from sqlalchemy.orm import sessionmaker
 #%%
 meta = MetaData()
 USERNAME = 'root'
-PASSWORD = '-------------'
+PASSWORD = '1393ram1393#$'
 SERVER = 'localhost'
 engine = create_engine(f'mysql+pymysql://{USERNAME}:{PASSWORD}@{SERVER}:3306/', echo=True)
 conn = engine.connect()
@@ -33,8 +33,8 @@ Base = declarative_base()
 
 class LapTop(Base):  # define table of laptop (normalized)
     __tablename__ = 'laptop'
-
     id = Column(Integer, unique=True, primary_key=True)
+    laptop_id = Column(Integer, unique=True)
     Manufacturer = Column(String(64))
     Model_Name = Column(String(255))
     Category = Column(String(64))
@@ -45,17 +45,17 @@ class LapTop(Base):  # define table of laptop (normalized)
     Storage = Column(String(64))
     GPU = Column(String(64))
     OS = Column(String(32))
-    OS_Version = Column(Float)
+    OS_Version = Column(String(32))
     Weight = Column(String(32))
 
 
 class Order(Base):
     __tablename__ = 'order'
-
-    Order_id = Column(Integer, unique=True, primary_key=True)
+    id = Column(Integer, unique=True, primary_key=True)
+    Order_id = Column(Integer, unique=True)
     Branch = Column(String(64))
-    laptop_id = Column(Integer, ForeignKey('laptop.id'))
-    Order_Date = Column(DateTime)
+    laptop_id = Column(Integer, ForeignKey('laptop.laptop_id'))
+    Order_Date = Column(String(64))
     Order_Priority = Column(String(32))
     price = Column(Float)
     Quantity = Column(Integer)
@@ -71,4 +71,5 @@ class Order(Base):
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
+
 
