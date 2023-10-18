@@ -43,68 +43,124 @@ class Scraping():
                        'date': [], 'price': []}
 
     def get_torob_links(self, test, category=99):
+        """
+        Get a list of torob links.
+
+        Args:
+            test (int): The test flag.
+            category (int, optional): The category ID. Defaults to 99.
+
+        Returns:
+            list: The list of torob links.
+        """
         try:
+            # Read the torob links from the csv file
             data = pd.read_csv('torob_links.csv')
             tlinks = list(data['link'].values)
         except:
+            # If the csv file does not exist or cannot be read, initialize an empty list
             tlinks = []
+
+        # Create a new Chrome driver instance
         driver = Chrome()
+
+        # Open the torob browse page for the specified category
         driver.get(f'https://torob.com/browse/{category}/')
+
         if test == 0:
             last_height = 0
             while True:
                 try:
+                    # Scroll the page down by 1000 pixels
                     driver.execute_script(f"window.scrollTo({last_height}, {last_height + 1000});")
                     time.sleep(1)
                     last_height += 1000
+                    # Get the current height of the page
                     f = driver.execute_script("return document.body.scrollHeight")
-                    # print(f,'\t',last_height,'\t',f-last_height)
                     if f - last_height < 0:
+                        # If the difference between the current height and the last scroll height is negative, stop scrolling
                         break
                 except:
+                    # If an exception occurs while scrolling, continue to the next iteration
                     continue
+
         i = 1
         while True:
             try:
+                # Get the link element at the specified index
                 link = driver.find_element_by_xpath(
                     f'//*[@id="layout-wrapp"]/div[2]/div/div[2]/div[2]/div[3]/div/div/div[{i}]/a').get_attribute(
                     'href')[:57]
+                # Extract the link ID from the link URL
                 link = link.split('/')[4]
                 if link not in tlinks:
+                    # Append the link ID to the list of torob links if it is not already present
                     tlinks.append(link)
                 i += 1
             except:
-                print('e')
+                # If an exception occurs while getting the link, break out of the loop
                 break
+
+        # Close the driver
         driver.close()
+
+        # Create a new DataFrame with the torob links
         torob = pd.DataFrame({'link': tlinks})
+
+        # Save the torob links to the csv file
         torob.to_csv('torob_links.csv')
+
+        # Return the list of torob links
         return tlinks
 
+    import pandas as pd
+    import requests
+
     def get_digikala_links(self, test, categories='notebook-netbook-ultrabook'):
+        """
+        Retrieves Digikala product links from the specified category.
+
+        Args:
+            test (int): Flag to indicate if the function is running in test mode.
+            categories (str): The category to retrieve product links from. Default is 'notebook-netbook-ultrabook'.
+
+        Returns:
+            List[str]: A list of Digikala product links.
+        """
         try:
+            # Read existing links from CSV file
             data = pd.read_csv('digi_links.csv')
             tlinks = list(data['link'].values)
         except:
             tlinks = []
+
+        # Initialize session and set headers
         i = 1
         s = requests.Session()
         site = 'https://www.digikala.com/'
         s.headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:69.0) Gecko/20100101 Firefox/69.0'}
+
+        # Make initial request to Digikala website
         res = s.get(site)
         res.raise_for_status()
+
+        # Process each page of products
         while True:
             try:
+                # Construct URL for API request
                 json_url = f'https://api.digikala.com/v1/categories/{categories}/search/?has_selling_stock=1&page={i}&sort=4&seo_url=%2Fnotebook-netbook-ultrabook%2F%3Fhas_selling_stock%3D1%26page%3D1%26sort%3D4'
                 res = s.get(json_url)
                 res.raise_for_status()
                 data = res.json()
+
+                # Check if there are no more products
                 if len(data['data']['products']) == 0:
                     break
                 else:
                     products = data['data']['products']
                     for p in products:
                         if len(p['default_variant']) > 0:
+                            # Extract the link from the product data
                             link = (site + p['url']['uri'])[:47]
                             link = (link.split('/')[5].split('-')[1])
                             if int(link) not in tlinks:
@@ -112,11 +168,17 @@ class Scraping():
 
                 print(i, end=' ')
                 i += 1
-                if test != 0: break
+
+                # Break loop if running in test mode
+                if test != 0:
+                    break
             except:
                 continue
+
+        # Save links to CSV file
         torob = pd.DataFrame({'link': tlinks})
         torob.to_csv('digi_links.csv')
+
         return tlinks
 
     def to_csv_all_links(self, data=0, name='all_data'):
