@@ -1,2 +1,8 @@
-pandas
-sqlalchemy
+pandas~=2.0.3
+sqlalchemy~=1.4.39
+requests~=2.27.1
+numpy~=1.25.2
+aiohttp~=3.8.5
+bs4~=4.12.2
+beautifulsoup4~=4.12.2
+selenium~=4.11.2
