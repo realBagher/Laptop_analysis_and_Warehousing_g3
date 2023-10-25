@@ -61,7 +61,7 @@ class Store(Base):
 
 
 class Product_Store(Base):
-    __tablename__ = 'Produt_Store'
+    __tablename__ = 'Product_Store'
     Product_ID = Column(String(64),ForeignKey('Product.ID'), unique=True, primary_key=True)
     Store_ID = Column(String(64),ForeignKey('Store.ID'), unique=True, primary_key=True)
     Date = Column(String(32))
