@@ -11,7 +11,7 @@ from sqlalchemy.orm import sessionmaker
 #%%
 meta = MetaData()
 USERNAME = 'root'
-PASSWORD = '****'
+PASSWORD = '*****'
 SERVER = 'localhost'
 engine = create_engine(f'mysql+pymysql://{USERNAME}:{PASSWORD}@{SERVER}:3306/', echo=True)
 conn = engine.connect()
