@@ -41,6 +41,7 @@ class Scraping():
         self.PricChart = {'product_id': [], 'meanprice': [], 'lowprice': [], 'date': []}
         self.Stores = {'product_id': [], 'site': [], 'type': [], 'shop_name': [], 'shop_city': [], 'shop_loc': [],
                        'date': [], 'price': []}
+        self.doller={'jdate':[],'gdate':[],'open':[],'low':[],'high':[],'close':[],'dchange':[],'pchange':[]}
 
     def get_torob_links(self, test, category=99):
         """
@@ -653,10 +654,22 @@ class Scraping():
             batch = urls[j:j + batch_size]
             results = loop.run_until_complete(asyncio.gather(*(scrape_book(url) for url in batch)))
 
+    def get_doller_price(self):
+        '''
+        get dollar price from tgju.org site
+        :return:dict of dollar price
+        '''
+        url='https://api.tgju.org/v1/market/indicator/summary-table-data/price_dollar_rl?lang=fa&order_dir=asc&order_dir=&draw=1&columns[0][data]=0&columns[0][name]=&columns[0][searchable]=true&columns[0][orderable]=true&columns[0][search][value]=&columns[0][search][regex]=false&columns[1][data]=1&columns[1][name]=&columns[1][searchable]=true&columns[1][orderable]=true&columns[1][search][value]=&columns[1][search][regex]=false&columns[2][data]=2&columns[2][name]=&columns[2][searchable]=true&columns[2][orderable]=true&columns[2][search][value]=&columns[2][search][regex]=false&columns[3][data]=3&columns[3][name]=&columns[3][searchable]=true&columns[3][orderable]=true&columns[3][search][value]=&columns[3][search][regex]=false&columns[4][data]=4&columns[4][name]=&columns[4][searchable]=true&columns[4][orderable]=true&columns[4][search][value]=&columns[4][search][regex]=false&columns[5][data]=5&columns[5][name]=&columns[5][searchable]=true&columns[5][orderable]=true&columns[5][search][value]=&columns[5][search][regex]=false&columns[6][data]=6&columns[6][name]=&columns[6][searchable]=true&columns[6][orderable]=true&columns[6][search][value]=&columns[6][search][regex]=false&columns[7][data]=7&columns[7][name]=&columns[7][searchable]=true&columns[7][orderable]=true&columns[7][search][value]=&columns[7][search][regex]=false&start=0&length=5000&search=&order_col=&from=&to=&convert_to_ad=1&_=1698423180642'
+        r=requests.get(url)
+        r.raise_for_status()
+        data =  r.json()
+        pd.DataFrame(data['data']).to_csv('dollar.csv',index=False,encoding='utf-8')
+
 # this is the main of the program
 scrap = Scraping()
-scrap.get_data_torob(0)
-scrap.get_data_digi(0)
-scrap.to_csv_all_links(scrap.PricChart, name='pricechart')
-scrap.to_csv_all_links(scrap.Stores, name='stores')
-scrap.to_csv_all_links()
+# scrap.get_data_torob(0)
+# scrap.get_data_digi(0)
+# scrap.to_csv_all_links(scrap.PricChart, name='pricechart')
+# scrap.to_csv_all_links(scrap.Stores, name='stores')
+# scrap.to_csv_all_links()
+scrap.get_doller_price()
