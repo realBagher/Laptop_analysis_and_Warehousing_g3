@@ -74,4 +74,4 @@ text=[text]
 text=vc.transform((text))
 p=round(pow(2,m.predict(text)[0]))
 p='{:,.2f} IR'.format(p*10)
-f'{p}'
+f'{p} \n قیمت پیش بینی شده برای ویژگی های که وارد شده با خطای 20 تا 40 میلیون ریال '
